@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <Copyright>Phoenix-Advisory Sarl-s</Copyright>
+    <Company>Phoenix-Advisory Sarl-s</Company>
+    <RepositoryType>git</RepositoryType>
+    <Product>Phoenix technical libraries</Product>
+
+    <Authors>Mathieu Hustin;Herve Tinant</Authors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1705;NU1603;NU1605</NoWarn>
+  </PropertyGroup>
+</Project>

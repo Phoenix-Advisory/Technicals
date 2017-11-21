@@ -1,0 +1,43 @@
+<Project>
+  <PropertyGroup>
+    <Major>1</Major>
+    <Minor>0</Minor>
+    <Revision>0</Revision>
+
+    <BuildNumber Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' ">$(APPVEYOR_BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
+
+
+    <PrereleaseLabel></PrereleaseLabel>
+    <PrereleaseLabel Condition=" '$(APPVEYOR_BUILD_NUMBER)' == '' ">develop</PrereleaseLabel>
+    <PrereleaseLabel Condition=" '$(APPVEYOR_REPO_BRANCH)' != 'master'">$(APPVEYOR_REPO_BRANCH.Replace("_", ""))</PrereleaseLabel>
+    
+    <!-- <PrereleaseLabel></PrereleaseLabel> -->
+    <!-- For release versions only -->
+
+    <PrereleaseLabelConstants></PrereleaseLabelConstants>
+    <PrereleaseLabelConstants Condition=" '$(PrereleaseLabel)' == 'develop' ">PRERELEASE_DEVELOP</PrereleaseLabelConstants>
+    <PrereleaseLabelConstants Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' ">PRERELEASE_NIGHTLY</PrereleaseLabelConstants>
+    <DefineConstants>$(DefineConstants);$(PrereleaseLabelConstants)</DefineConstants>
+
+    <AssemblyVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)</AssemblyVersion>
+    <AssemblyFileVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)</AssemblyFileVersion>
+    <InformationalVersion>$(Major).$(Minor).$(Revision).$(BuildNumber))</InformationalVersion>
+    <InformationalVersion Condition=" '$(PrereleaseLabel)'!= '' ">$(Major).$(Minor).$(Revision)-$(PrereleaseLabel)-$(BuildNumber)</InformationalVersion>
+    <PackageVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)</PackageVersion>
+    <PackageVersion Condition=" '$(PrereleaseLabel)'!= '' ">$(Major).$(Minor).$(Revision)-$(PrereleaseLabel)-$(BuildNumber)</PackageVersion>
+    <VersionPrefix>$(Major).$(Minor).$(Revision)</VersionPrefix>
+    <VersionSufix>$(PrereleaseLabel)</VersionSufix>
+
+
+    <GenerateAssemblyCompanyAttribute>true</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyConfigurationAttribute>true</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
+    <GenerateNeutralResourcesLanguageAttribute>true</GenerateNeutralResourcesLanguageAttribute>
+    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+  </PropertyGroup>
+
+</Project>
