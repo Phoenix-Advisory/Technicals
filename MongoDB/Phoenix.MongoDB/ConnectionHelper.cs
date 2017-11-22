@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using MongoDB.Bson;
-using MongoDB.Driver;
-using Phoenix.Core.DependencyInjection;
+using MongoDB.Driver;                   
 using Phoenix.Core.ParameterGuard;
 using Phoenix.MongoDB.Attributes;
 using Phoenix.MongoDB.Configuration;
@@ -15,13 +14,25 @@ namespace Phoenix.MongoDB
   /// <summary>
   /// Help to manage MongoDb connection. 
   /// </summary>
-  public static class ConnectionHelper
+  public class ConnectionManager
   {
-    private static readonly IDictionary<string, IMongoDatabase> _Databases = new Dictionary<string, IMongoDatabase>();
-    private static readonly IDictionary<string, IMongoClient> _Clients = new Dictionary<string, IMongoClient>();
-    private static readonly object _Lock = new object();
-    private static string BUCKET_METADATA_SUFFIX = ".files";
-    
+    private readonly IDictionary<string, IMongoDatabase> _Databases = new Dictionary<string, IMongoDatabase>();
+    private readonly IDictionary<string, IMongoClient> _Clients = new Dictionary<string, IMongoClient>();
+    private readonly object _Lock = new object();
+    private readonly IDictionary<string, MongoDbSetting> _Settings;
+
+    private const string BUCKET_METADATA_SUFFIX = ".files";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConnectionManager"/> class.
+    /// </summary>
+    /// <param name="settings">The settings.</param>
+    public ConnectionManager(IDictionary<string, MongoDbSetting> settings)
+    {
+      Guard.IsNotNull(settings, nameof(settings));
+      _Settings = settings;
+    }
+
     /// <summary>
     /// Gets the database connection.
     /// </summary>
@@ -29,7 +40,7 @@ namespace Phoenix.MongoDB
     /// <returns>
     /// The <see cref="IMongoDatabase" /> corresponding to <paramref name="settings" />.
     /// </returns>
-    public static IMongoDatabase GetDatabase(MongoDbSetting settings)
+    public IMongoDatabase GetDatabase(MongoDbSetting settings)
     {
       Guard.IsNotNull(settings, nameof(settings));
 
@@ -85,12 +96,12 @@ namespace Phoenix.MongoDB
     /// The <see cref="IMongoDatabase" /> corresponding to <paramref name="connectionName" />
     /// </returns>
     /// <exception cref="ArgumentException">Can't found connection settings for {connectionName}</exception>
-    public static IMongoDatabase GetDatabase(string connectionName)
+    public IMongoDatabase GetDatabase(string connectionName)
     {
       Guard.IsNotNullOrWhiteSpace(connectionName, nameof(connectionName));
 
-      MongoDbSetting setting = DIHelper.ApplicationContainer.ResolveOptionalNamed<MongoDbSetting>(connectionName);
-      if (setting == null)
+      MongoDbSetting setting = null;
+      if (!_Settings.TryGetValue(connectionName, out setting) || setting == null)
       { 
         throw new ArgumentException($"Can't found connection settings for '{connectionName}'", nameof(connectionName));
       }

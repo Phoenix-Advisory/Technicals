@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Phoenix.Core.DependencyInjection;
 using Phoenix.MongoDB.Configuration;
@@ -29,43 +30,41 @@ namespace Phoenix.MongoDB.Test.Utils
       prop.SetValue(t, new ContainerBuilder(), null);
     }
 
-    public static IContainer InitializeContainer()
+    public static IServiceProvider InitializeContainer()
     {
-      DIHelperUtils.ResetContainer();
-      if (DIHelper.ApplicationContainer == null)
-      {
-        MongoDbSetting setting = new MongoDbSetting
+      IServiceCollection services = new ServiceCollection();
+      services.AddMongo();
+      services.AddSingleton<IDictionary<string, MongoDbSetting>>(
+        (prov) =>
         {
-          Id = "Test",
-          Database = $"MyTestDb",
-          Servers = new List<MongoDbServer> {
+          IDictionary<string, MongoDbSetting> settings = new Dictionary<string, MongoDbSetting>();
+          MongoDbSetting setting = new MongoDbSetting
+          {
+            Id = "Test",
+            Database = $"MyTestDb",
+            Servers = new List<MongoDbServer> {
                     new MongoDbServer { Address = "localhost", Port = 27017 }
                 }
-        };
-        DIHelper.Builder.RegisterInstance(setting).Named<MongoDbSetting>("Test");
-        setting = new MongoDbSetting
-        {
-          Id = "Test2",
-          Database = $"MyTestDb2",
-          Servers = new List<MongoDbServer> {
+          };
+          settings.Add(setting.Id, setting);
+          setting = new MongoDbSetting
+          {
+            Id = "Test2",
+            Database = $"MyTestDb2",
+            Servers = new List<MongoDbServer> {
                     new MongoDbServer { Address = "localhost", Port=27017 }
                 }
-        };
-        DIHelper.Builder.RegisterInstance(setting).Named<MongoDbSetting>("Test2");
+          };
+          settings.Add(setting.Id, setting);
+          return settings;
+        }
 
-        DIHelper.Builder.RegisterInstance(new LoggerFactory()).As<ILoggerFactory>();
+        );
+      services.AddSingleton<IMongoRepository<MyNamedEntity>>((prov) => new MongoRepository<MyNamedEntity>("Test", "Test3", prov.GetService<ConnectionManager>()));
+      services.AddSingleton<IMongoFileRepository<MyNamedEntity>>((prov) => new MongoFileRepository<MyNamedEntity>("Test", "Test3", prov.GetService<ConnectionManager>()));
+      return services.BuildServiceProvider();
 
-        DIHelper.Builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>)).SingleInstance();
-        DIHelper.Builder.RegisterGeneric(typeof(MongoRepository<,>)).As(typeof(IMongoRepository<,>)).SingleInstance();
-        DIHelper.Builder.RegisterGeneric(typeof(MongoFileRepository<>)).As(typeof(IMongoFileRepository<>)).SingleInstance();
-        DIHelper.Builder.RegisterGeneric(typeof(MongoFileRepository<,>)).As(typeof(IMongoFileRepository<,>)).SingleInstance();
 
-        DIHelper.Builder.RegisterInstance(new MongoRepository<MyNamedEntity>("Test", "Test3")).As<IMongoRepository<MyNamedEntity>>();
-        DIHelper.Builder.RegisterInstance(new MongoFileRepository<MyNamedEntity>("Test", "Test3")).As<IMongoFileRepository<MyNamedEntity>>();
-        DIHelper.BuildServiceProvider(null);
-      }
-
-      return DIHelper.ApplicationContainer;
     }
   }
 }

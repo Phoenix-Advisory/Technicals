@@ -15,26 +15,29 @@ namespace Phoenix.MongoDB.FileRepositories
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata}" /> class.
-    /// </summary>                                  
-    public MongoFileRepository()
-        : base()
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata}" /> class.
     /// </summary>
-    /// <param name="connectionName">Name of the connection.</param>  
-    public MongoFileRepository(string connectionName)
-        : base(connectionName)
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoFileRepository(ConnectionManager connectionManager)
+        : base(connectionManager)
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata}" /> class.
     /// </summary>
     /// <param name="connectionName">Name of the connection.</param>
-    /// <param name="bucketName">Name of the bucket.</param>  
-    public MongoFileRepository(string connectionName, string bucketName)
-        : base(connectionName, bucketName)
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoFileRepository(string connectionName, ConnectionManager connectionManager)
+        : base(connectionName, connectionManager)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata}" /> class.
+    /// </summary>
+    /// <param name="connectionName">Name of the connection.</param>
+    /// <param name="bucketName">Name of the bucket.</param>
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoFileRepository(string connectionName, string bucketName, ConnectionManager connectionManager)
+        : base(connectionName, bucketName, connectionManager)
     { }
   }
 }

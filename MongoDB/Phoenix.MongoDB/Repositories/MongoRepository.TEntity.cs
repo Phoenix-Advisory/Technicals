@@ -18,23 +18,26 @@ namespace Phoenix.MongoDB.Repositories
     /// </summary>
     /// <param name="connectionName">Name of the connection.</param>
     /// <param name="collectionName">Name of the collection.</param>
-    public MongoRepository(string connectionName, string collectionName) :
-        base(connectionName, collectionName)
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MongoRepository{TEntity}" /> class.
-    /// </summary>                                 
-    public MongoRepository() :
-        base()
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoRepository(string connectionName, string collectionName, ConnectionManager connectionManager) :
+        base(connectionName, collectionName, connectionManager)
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoRepository{TEntity}" /> class.
     /// </summary>
-    /// <param name="connectionName">Name of the connection.</param>     
-    public MongoRepository(string connectionName) :
-        base(connectionName)
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoRepository(ConnectionManager connectionManager) :
+        base(connectionManager)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MongoRepository{TEntity}" /> class.
+    /// </summary>
+    /// <param name="connectionName">Name of the connection.</param>
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoRepository(string connectionName, ConnectionManager connectionManager) :
+        base(connectionName, connectionManager)
     { }        
   }
 }

@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using Phoenix.MongoDB.FileRepositories;
 using Phoenix.MongoDB.Test.Entities;
 using Phoenix.MongoDB.Test.Utils;
@@ -14,14 +15,15 @@ namespace Phoenix.MongoDB.Test.FileRepositories
     [Fact(DisplayName = "FileRepo Ctor")]
     public void Ctor()
     {
-      DIHelperUtils.InitializeContainer();
-      Assert.Throws<ArgumentException>(() => new MongoFileRepository<MyTestEntity>("Test"));
-      IMongoFileRepository<MyNamedEntity> repo = new MongoFileRepository<MyNamedEntity>("Test", "TestFile");
+      IServiceProvider container = DIHelperUtils.InitializeContainer();
+      Assert.Throws<ArgumentException>(() => new MongoFileRepository<MyTestEntity>("Test", container.GetService<ConnectionManager>()));
+      Assert.Throws<ArgumentException>(() => new MongoFileRepository<MyTestEntity>("Test", "TestBadFile", null));
+      IMongoFileRepository<MyNamedEntity> repo = new MongoFileRepository<MyNamedEntity>("Test", "TestFile", container.GetService<ConnectionManager>());
       Assert.NotNull(repo);
       Assert.NotNull(repo.Database);
       Assert.NotNull(repo.Bucket);
       Assert.Equal("TestFile", repo.BucketName);
-      repo = new MongoFileRepository<MyNamedEntity>();
+      repo = new MongoFileRepository<MyNamedEntity>(container.GetService<ConnectionManager>());
       Assert.NotNull(repo);
       Assert.NotNull(repo.Database);
       Assert.Equal("MyTestDb2", repo.Database.DatabaseNamespace.DatabaseName);
@@ -32,7 +34,6 @@ namespace Phoenix.MongoDB.Test.FileRepositories
     [Fact(DisplayName = "FileRepo Insert")]
     public async Task Insert()
     {
-      DIHelperUtils.InitializeContainer();
       IMongoFileRepository<MyNamedEntity> repo = await InitializeRepo<MyNamedEntity>().ConfigureAwait(false);
       MyNamedEntity[] expected = TestHelper.CreateTestEntity(1);
       await repo.Create(TestHelper.GenerateContent(20), expected[0].Name + ".bin", expected[0]).ConfigureAwait(false);
@@ -47,7 +48,6 @@ namespace Phoenix.MongoDB.Test.FileRepositories
     [Fact(DisplayName = "FileRepo First")]
     public async Task GetFirst()
     {
-      DIHelperUtils.InitializeContainer();
       IMongoFileRepository<MyNamedEntity> repo = await InitializeRepo<MyNamedEntity>().ConfigureAwait(false);
       MyNamedEntity[] expected = TestHelper.CreateTestEntity(1);
       await repo.Create(TestHelper.GenerateContent(20), expected[0].Name + ".bin", expected[0]).ConfigureAwait(false);
@@ -88,7 +88,6 @@ namespace Phoenix.MongoDB.Test.FileRepositories
     [Fact(DisplayName = "FileRepo Single")]
     public async Task GetSingle()
     {
-      DIHelperUtils.InitializeContainer();
       IMongoFileRepository<MyNamedEntity> repo = await InitializeRepo<MyNamedEntity>().ConfigureAwait(false);
       MyNamedEntity[] expected = TestHelper.CreateTestEntity(1);
       await repo.Create(TestHelper.GenerateContent(20), expected[0].Name + ".bin", expected[0]).ConfigureAwait(false);
@@ -129,7 +128,6 @@ namespace Phoenix.MongoDB.Test.FileRepositories
     [Fact(DisplayName = "FileRepo Exists")]
     public async Task Exists()
     {
-      DIHelperUtils.InitializeContainer();
       IMongoFileRepository<MyNamedEntity> repo = await InitializeRepo<MyNamedEntity>().ConfigureAwait(false);
       MyNamedEntity[] expected = TestHelper.CreateTestEntity(1);
       await repo.Create(TestHelper.GenerateContent(20), expected[0].Name + ".bin", expected[0]).ConfigureAwait(false);
@@ -143,7 +141,6 @@ namespace Phoenix.MongoDB.Test.FileRepositories
     [Fact(DisplayName = "FileRepo Update")]
     public async Task Update()
     {
-      DIHelperUtils.InitializeContainer();
       IMongoFileRepository<MyNamedEntity> repo = await InitializeRepo<MyNamedEntity>().ConfigureAwait(false);
       MyNamedEntity[] expected = TestHelper.CreateTestEntity(2);
       await repo.Create(TestHelper.GenerateContent(20), expected[0].Name + ".bin", expected[0]).ConfigureAwait(false);
@@ -170,7 +167,8 @@ namespace Phoenix.MongoDB.Test.FileRepositories
 
     private async Task<IMongoFileRepository<T>> InitializeRepo<T>() where T : class
     {
-      MongoFileRepository<T> res = new MongoFileRepository<T>("Test", "TestFile");
+      IServiceProvider container = DIHelperUtils.InitializeContainer();                                     
+      MongoFileRepository<T> res = new MongoFileRepository<T>("Test", "TestFile", container.GetService<ConnectionManager>());
       await res.DropCollection().ConfigureAwait(false);
       return res;
     }

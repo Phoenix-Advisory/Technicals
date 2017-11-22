@@ -19,13 +19,15 @@ namespace Phoenix.MongoDB
     /// <param name="builder">Service collection where add MongoDB providers.</param>
     public static void AddMongo(this IServiceCollection builder)
     {
-      builder.TryAddSingleton<IEnumerable<MongoDbSetting>>(provider => {
+      builder.TryAddSingleton<IDictionary<string, MongoDbSetting>>(provider => {
         IConfiguration config = provider.GetRequiredService<IConfiguration>();
         IConfigurationSection section = config.GetSection("MongoDbSettings");
         IDictionary<string, MongoDbSetting> settings = new Dictionary<string, MongoDbSetting>();
         section.Bind(settings);
-        return settings.Values;
+        return settings;
       });
+
+      builder.TryAddSingleton<ConnectionManager>();
 
       builder.TryAddSingleton(typeof(IMongoRepository<>), typeof(MongoRepository<>));
       builder.TryAddSingleton(typeof(IMongoRepository<,>), typeof(MongoRepository<,>));

@@ -1,4 +1,4 @@
-﻿using Autofac;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Phoenix.MongoDB.Configuration;
 using Phoenix.MongoDB.Repositories;
 using Phoenix.MongoDB.Test.Entities;
@@ -6,7 +6,6 @@ using Phoenix.MongoDB.Test.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,24 +17,24 @@ namespace Phoenix.MongoDB.Test.Repositories
     [Fact(DisplayName = "Repo Ctor with Entity derived class")]
     public void CtorEntityRepository()
     {
-      IContainer container = DIHelperUtils.InitializeContainer();
-      Assert.NotNull(container.ResolveNamed<MongoDbSetting>("Test"));
-      Assert.Throws<ArgumentException>(() => new MongoRepository<MyTestEntity>("Test", null));
-      Assert.Throws<ArgumentException>(() => new MongoRepository<MyTestEntity>(null, "Test"));
+      IServiceProvider container = DIHelperUtils.InitializeContainer();
+      Assert.NotNull(container.GetService<IDictionary<string, MongoDbSetting>>());
+      Assert.Throws<ArgumentException>(() => new MongoRepository<MyTestEntity>("Test", null, container.GetService<ConnectionManager>()));
+      Assert.Throws<ArgumentException>(() => new MongoRepository<MyTestEntity>(null, "Test", container.GetService<ConnectionManager>()));
+      Assert.Throws<ArgumentException>(() => new MongoRepository<MyTestEntity>("Test", "Test", null));
       Assert.Throws<ArgumentException>(() => new MongoRepository<MyTestEntity>(null));
     }
 
     [Fact(DisplayName = "Repo Ctor with Collection Name attribute")]
     public void CtorEntityWithCollectionNameAttributeRepository()
     {
-      IContainer container = DIHelperUtils.InitializeContainer();
-      Assert.NotNull(container.ResolveNamed<MongoDbSetting>("Test"));
-      IMongoRepository<MyNamedEntity> test = new MongoRepository<MyNamedEntity>("Test");
+      IServiceProvider container = DIHelperUtils.InitializeContainer();
+      IMongoRepository<MyNamedEntity> test = new MongoRepository<MyNamedEntity>("Test", container.GetService<ConnectionManager>());
       Assert.NotNull(test);
       Assert.NotNull(test.Database);
       Assert.NotNull(test.Collection);
       Assert.Equal("TestCol", test.CollectionName);
-      test = new MongoRepository<MyNamedEntity>();
+      test = new MongoRepository<MyNamedEntity>(container.GetService<ConnectionManager>());
       Assert.NotNull(test);
       Assert.NotNull(test.Database);
       Assert.Equal("MyTestDb2", test.Database.DatabaseNamespace.DatabaseName);
@@ -46,9 +45,8 @@ namespace Phoenix.MongoDB.Test.Repositories
     [Fact(DisplayName = "Repo Ctor with Entity derived class and Col name param")]
     public void CtorEntityColNameParamRepository()
     {
-      IContainer container = DIHelperUtils.InitializeContainer();
-      Assert.NotNull(container.ResolveNamed<MongoDbSetting>("Test"));
-      IMongoRepository<MyTestEntity> test = new MongoRepository<MyTestEntity>("Test", "Test");
+      IServiceProvider container = DIHelperUtils.InitializeContainer();
+      IMongoRepository<MyTestEntity> test = new MongoRepository<MyTestEntity>("Test", "Test", container.GetService<ConnectionManager>());
       Assert.NotNull(test);
       Assert.NotNull(test.Database);
       Assert.NotNull(test.Collection);
@@ -166,7 +164,8 @@ namespace Phoenix.MongoDB.Test.Repositories
 
     private async Task<IMongoRepository<T>> InitializeRepo<T>() where T : class
     {
-      IMongoRepository<T> res = new MongoRepository<T>("Test");
+      IServiceProvider container = DIHelperUtils.InitializeContainer();
+      IMongoRepository<T> res = new MongoRepository<T>("Test", container.GetService<ConnectionManager>());
       await res.Database.DropCollectionAsync(res.CollectionName).ConfigureAwait(false);
       return res;
     }

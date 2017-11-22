@@ -29,10 +29,9 @@ namespace Phoenix.MongoDB.FileRepositories
     private readonly string _BucketName;           
     private readonly object _LockObj = new object();
     private IMongoDatabase _Database;
-    private IGridFSBucket _Bucket;
-
-    private ILogger _Logger = null;                                              
+    private IGridFSBucket _Bucket;                                             
     private IMongoCollection<FileInfo<TMetadata>> _FileCollection;
+    private readonly ConnectionManager _ConnectionManager;
 
     /// <summary>
     /// Gets the database connection used.
@@ -47,7 +46,7 @@ namespace Phoenix.MongoDB.FileRepositories
           {
             if (_Database == null)
             {
-              _Database = ConnectionHelper.GetDatabase(_ConnectionName);
+              _Database = _ConnectionManager.GetDatabase(_ConnectionName);
             }
           }
         }
@@ -104,54 +103,37 @@ namespace Phoenix.MongoDB.FileRepositories
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata, TKey}" /> class.
-    /// </summary>                                                       
-    public MongoFileRepository() :
-        this(ConnectionHelper.GetDatabaseSettingsName(typeof(TMetadata)), ConnectionHelper.GetBucketName(typeof(TMetadata)))
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata, TKey}" /> class.
     /// </summary>
-    /// <param name="connectionName">Name of the connection.</param>     
-    public MongoFileRepository(string connectionName) :
-        this(connectionName, ConnectionHelper.GetBucketName(typeof(TMetadata)))
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoFileRepository(ConnectionManager connectionManager) :
+        this(ConnectionManager.GetDatabaseSettingsName(typeof(TMetadata)), ConnectionManager.GetBucketName(typeof(TMetadata)), connectionManager)
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata, TKey}" /> class.
     /// </summary>
     /// <param name="connectionName">Name of the connection.</param>
-    /// <param name="bucketName">Name of the bucket.</param>          
-    public MongoFileRepository(string connectionName, string bucketName)
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoFileRepository(string connectionName, ConnectionManager connectionManager) :
+        this(connectionName, ConnectionManager.GetBucketName(typeof(TMetadata)), connectionManager)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata, TKey}" /> class.
+    /// </summary>
+    /// <param name="connectionName">Name of the connection.</param>
+    /// <param name="bucketName">Name of the bucket.</param>
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoFileRepository(string connectionName, string bucketName, ConnectionManager connectionManager)
     {
+      Guard.IsNotNull(connectionManager, nameof(connectionManager));
       Guard.IsNotNullOrWhiteSpace(connectionName, nameof(connectionName));
       Guard.IsNotNullOrWhiteSpace(bucketName, nameof(bucketName));
 
+      _ConnectionManager = connectionManager;
       _ConnectionName = connectionName;
       _BucketName = bucketName;
-    }
-
-    /// <summary>
-    /// Get instance of logger.
-    /// </summary>
-    protected ILogger Logger
-    {
-      get
-      {
-        if (_Logger == null)
-        {
-          lock (_LockObj)
-          {
-            if (_Logger == null)
-            {
-              ILoggerFactory factory = DIHelper.ApplicationContainer.Resolve<ILoggerFactory>();
-              _Logger = factory.CreateLogger(GetType());
-            }
-          }
-        }
-        return _Logger;
-      }
-    }
+    } 
 
     #region Create
     /// <summary>

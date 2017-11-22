@@ -32,7 +32,7 @@ namespace Phoenix.MongoDB.Repositories
     private IMongoDatabase _Database;
     private IMongoCollection<TEntity> _Collection;
     private readonly object _LockObj = new object();
-    private ILogger _Logger = null;
+    private readonly ConnectionManager _ConnectionManager;
 
     /// <summary>
     /// The default options for Update operations
@@ -52,7 +52,7 @@ namespace Phoenix.MongoDB.Repositories
           {
             if (_Database == null)
             {
-              _Database = ConnectionHelper.GetDatabase(_ConnectionName);
+              _Database = _ConnectionManager.GetDatabase(_ConnectionName);
             }
           }
         }
@@ -90,52 +90,35 @@ namespace Phoenix.MongoDB.Repositories
     /// Initializes a new instance of the <see cref="MongoRepository{TEntity, TKey}" /> class.
     /// </summary>
     /// <param name="connectionName">Name of the connection.</param>
-    /// <param name="collectionName">Name of the collection.</param>     
-    public MongoRepository(string connectionName, string collectionName)
+    /// <param name="collectionName">Name of the collection.</param>
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoRepository(string connectionName, string collectionName, ConnectionManager connectionManager)
     {
+      Guard.IsNotNull(connectionManager, nameof(connectionManager));
       Guard.IsNotNullOrWhiteSpace(connectionName, nameof(connectionName));
       Guard.IsNotNullOrWhiteSpace(collectionName, nameof(collectionName));
 
+      _ConnectionManager = connectionManager;
       _ConnectionName = connectionName;
       _CollectionName = collectionName;           
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoRepository{TEntity, TKey}" /> class.
-    /// </summary>                                  
-    public MongoRepository() :
-        this(ConnectionHelper.GetDatabaseSettingsName(typeof(TEntity)), ConnectionHelper.GetCollectionName(typeof(TEntity)))
+    /// </summary>
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoRepository(ConnectionManager connectionManager) :
+        this(ConnectionManager.GetDatabaseSettingsName(typeof(TEntity)), ConnectionManager.GetCollectionName(typeof(TEntity)), connectionManager)
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoRepository{TEntity, TKey}" /> class.
     /// </summary>
-    /// <param name="connectionName">Name of the connection.</param>        
-    public MongoRepository(string connectionName) :
-        this(connectionName, ConnectionHelper.GetCollectionName(typeof(TEntity)))
-    { }                     
-
-    /// <summary>
-    /// Get instance of logger.
-    /// </summary>
-    protected ILogger Logger
-    {
-      get
-      {
-        if (_Logger == null)
-        {
-          lock (_LockObj)
-          {
-            if (_Logger == null)
-            {
-              ILoggerFactory factory = DIHelper.ApplicationContainer.Resolve<ILoggerFactory>();
-              _Logger = factory.CreateLogger(GetType());
-            }
-          }
-        }
-        return _Logger;
-      }
-    }
+    /// <param name="connectionName">Name of the connection.</param>
+    /// <param name="connectionManager">The connection manager.</param>
+    public MongoRepository(string connectionName, ConnectionManager connectionManager) :
+        this(connectionName, ConnectionManager.GetCollectionName(typeof(TEntity)), connectionManager)
+    { }          
 
     #region Count
     /// <summary>
