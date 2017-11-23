@@ -3,7 +3,7 @@
   /// <summary>
   /// Class with sxtension methods of <see cref="FluentGuard{T}"/> for Object guarding.
   /// </summary>
-  public static partial class FluentGuardExtensions
+  public static class FluentGuardObjectExtensions
   {
     /// <summary>
     /// Check if parameter is null.
@@ -15,7 +15,9 @@
         where T : class
     {
       if (guard.Value != null)
+      {
         guard.ThrowException("{0} must be null.");
+      }
 
       return guard;
     }
@@ -30,7 +32,9 @@
         where T : class
     {
       if (guard.Value == null)
+      {
         guard.ThrowException("{0} can't be null.");
+      }
 
       return guard;
     }

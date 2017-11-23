@@ -1,6 +1,9 @@
 ﻿namespace Phoenix.Core.ParameterGuard
 {
-  public static partial class FluentGuardExtensions
+  /// <summary>
+  /// Class with sxtension methods of <see cref="FluentGuard{T}"/> for String guarding.
+  /// </summary>
+  public static class FluentGuardStringExtensions
   {
     /// <summary>
     /// Check if string parameter is null or empty.
@@ -10,7 +13,9 @@
     public static FluentGuard<string> IsNullOrEmpty(this FluentGuard<string> guard)
     {
       if (!string.IsNullOrEmpty(guard.Value))
+      {
         guard.ThrowException("{0} must be null or string empty.");
+      }
 
       return guard;
     }
@@ -23,7 +28,9 @@
     public static FluentGuard<string> IsNullOrWhiteSpace(this FluentGuard<string> guard)
     {
       if (!string.IsNullOrWhiteSpace(guard.Value))
+      {
         guard.ThrowException("{0} must be null or contains only whitespaces.");
+      }
 
       return guard;
     }
@@ -36,7 +43,9 @@
     public static FluentGuard<string> IsNotNullOrEmpty(this FluentGuard<string> guard)
     {
       if (string.IsNullOrEmpty(guard.Value))
+      {
         guard.ThrowException("{0} can't be null or string empty.");
+      }
 
       return guard;
     }
@@ -49,7 +58,9 @@
     public static FluentGuard<string> IsNotNullOrWhiteSpace(this FluentGuard<string> guard)
     {
       if (string.IsNullOrWhiteSpace(guard.Value))
+      {
         guard.ThrowException("{0} can't be null or can't contains only whitespaces.");
+      }
 
       return guard;
     }

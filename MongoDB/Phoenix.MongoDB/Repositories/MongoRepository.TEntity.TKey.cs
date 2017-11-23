@@ -37,7 +37,7 @@ namespace Phoenix.MongoDB.Repositories
     /// <summary>
     /// The default options for Update operations
     /// </summary>
-    protected static UpdateOptions _DefaultUpdateOption = new UpdateOptions { IsUpsert = true };
+    protected static readonly UpdateOptions _DefaultUpdateOption = new UpdateOptions { IsUpsert = true };
 
     /// <summary>
     /// Gets the database used.

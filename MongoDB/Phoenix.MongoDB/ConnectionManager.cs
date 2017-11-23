@@ -73,7 +73,9 @@ namespace Phoenix.MongoDB
                 mongoSettings.ReadConcern = new ReadConcern(settings.ReadConcernLevel);
                 mongoSettings.ReadPreference = new ReadPreference(settings.ReadPreferenceMode);
                 if (!string.IsNullOrWhiteSpace(settings.WriteConcernMode))
+                {
                   mongoSettings.WriteConcern = new WriteConcern(settings.WriteConcernMode);
+                }
               }
               mongoSettings.ConnectTimeout = TimeSpan.Parse(settings.ConnectTimeout);
               mongoSettings.GuidRepresentation = GuidRepresentation.Standard;
@@ -130,7 +132,9 @@ namespace Phoenix.MongoDB
           {
             res = GetCollectionName(tp);
             if (!string.IsNullOrEmpty(res))
+            {
               return res;
+            }
           }
         }
 
@@ -172,7 +176,9 @@ namespace Phoenix.MongoDB
           {
             string res = GetBucketName(tp);
             if (!string.IsNullOrEmpty(res))
+            {
               return res;
+            }
           }
         }
 
@@ -200,7 +206,9 @@ namespace Phoenix.MongoDB
           {
             string res = GetDatabaseSettingsName(tp);
             if (!string.IsNullOrEmpty(res))
+            {
               return res;
+            }
           }
         }
 

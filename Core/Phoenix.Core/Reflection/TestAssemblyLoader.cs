@@ -11,7 +11,7 @@ namespace Phoenix.Core.Reflection
   /// <seealso cref="IEntryAssemblyLoader" />
   public class TestAssemblyLoader : IEntryAssemblyLoader
   {
-    private readonly Assembly _Assembly = null;
+    private readonly Assembly _Assembly;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TestAssemblyLoader"/> class.
@@ -40,11 +40,14 @@ namespace Phoenix.Core.Reflection
     {
       yield return _Assembly;
 
-      foreach (AssemblyName assName in _Assembly.GetReferencedAssemblies()
-                                                .Where(x => 
-                                                  x.FullName.StartsWith(assemblyStartWith, StringComparison.OrdinalIgnoreCase)
-                                                ))
+      foreach (AssemblyName assName in GetEntryAssembly()
+                                        .GetReferencedAssemblies()
+                                        .Where(x =>
+                                          x.FullName.StartsWith(assemblyStartWith, StringComparison.OrdinalIgnoreCase)
+                                        ))
+      {
         yield return Assembly.Load(assName);
+      }
     }
   }
 }

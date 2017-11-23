@@ -17,7 +17,7 @@ namespace Phoenix.MongoDB.Configuration
     {
       BsonDefaults.GuidRepresentation = GuidRepresentation.Standard;
 
-      ConventionPack pack = new ConventionPack()
+      ConventionPack pack = new ConventionPack
                                 {
                                     new EnumRepresentationConvention(BsonType.String)
                                 };

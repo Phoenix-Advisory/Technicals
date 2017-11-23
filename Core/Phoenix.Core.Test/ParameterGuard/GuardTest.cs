@@ -8,6 +8,7 @@ namespace Phoenix.Core.Test.ParameterGuard
   public class GuardTest
   {
     private const string ParamName = "MyParameter";
+
     [Fact(DisplayName = "Guard IsNotNull")]
     public void IsNotNullTest()
     {

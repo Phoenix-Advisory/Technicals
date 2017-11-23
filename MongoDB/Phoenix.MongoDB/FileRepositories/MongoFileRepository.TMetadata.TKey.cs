@@ -231,11 +231,17 @@ namespace Phoenix.MongoDB.FileRepositories
     public virtual async Task<FileInfo<TMetadata>> Update(TKey id, byte[] content, string filename, TMetadata metadata, CancellationToken cancellationToken = default(CancellationToken))
     {
       if (content == null || content.Count() == 0)
+      {
         throw new ArgumentNullException("Content cannot be null");
+      }
       if (string.IsNullOrEmpty(filename))
+      {
         throw new ArgumentNullException("File name cannot be null or empty");
+      }
       if (metadata == null)
+      {
         throw new ArgumentNullException("Metadata cannot be null");
+      }
 
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -533,10 +539,8 @@ namespace Phoenix.MongoDB.FileRepositories
     public virtual async Task<FileInfo<TMetadata>> GetFirst(FilterDefinition<GridFSFileInfo> filter, CancellationToken cancellationToken = default(CancellationToken))
     {
       cancellationToken.ThrowIfCancellationRequested();
-      //GridFSFileInfo result = await Bucket.Find(filter).FirstAsync(cancellationToken).ConfigureAwait(false);
-
+      
       return await Convert(await Bucket.Find(filter).FirstAsync(cancellationToken).ConfigureAwait(false)).ConfigureAwait(false);
-      //return await ProcessUpdate(() => Task.FromResult(Convert(result)), cancellationToken).ConfigureAwait(false);
     }
     #endregion
 
@@ -699,9 +703,11 @@ namespace Phoenix.MongoDB.FileRepositories
       FileInfo<TMetadata> res = null;
 
       if (gridInfo == null)
+      {
         return Task.FromResult(res);
+      }
 
-      res = new FileInfo<TMetadata>()
+      res = new FileInfo<TMetadata>
       {
         Id = gridInfo.Id,
         Filename = gridInfo.Filename,
@@ -737,7 +743,7 @@ namespace Phoenix.MongoDB.FileRepositories
 
     private async Task<bool> CheckCollectionExists(string name)
     {
-      var colCursor = await Database.ListCollectionsAsync(new ListCollectionsOptions { Filter = Builders<BsonDocument>.Filter.Eq("name", BucketName + ".chunks") }).ConfigureAwait(false);
+      var colCursor = await Database.ListCollectionsAsync(new ListCollectionsOptions { Filter = Builders<BsonDocument>.Filter.Eq("name", name) }).ConfigureAwait(false);
       var col = await colCursor.SingleOrDefaultAsync().ConfigureAwait(false);
       return col != null;
     }

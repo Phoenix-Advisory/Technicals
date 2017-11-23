@@ -9,7 +9,7 @@ namespace Phoenix.Core.UserManagement
   /// <seealso cref="IUserAccessor" />
   public class StaticUserAccessor : IUserAccessor
   {
-    private readonly IUserInfo _User = null;
+    private readonly IUserInfo _User;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StaticUserAccessor"/> class.
@@ -18,6 +18,7 @@ namespace Phoenix.Core.UserManagement
     public StaticUserAccessor(IUserInfo user)
     {
       Guard.IsNotNull(user, nameof(user));
+
       _User = user;
     }
 

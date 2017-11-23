@@ -148,7 +148,7 @@ namespace Phoenix.Core.Test.Comparer
       Assert.Null(resultItem.OldValue);
     }
 
-    private TestClass1 CreateInstance()
+    private static TestClass1 CreateInstance()
     {
       return new TestClass1
       {
@@ -184,7 +184,7 @@ namespace Phoenix.Core.Test.Comparer
             }
           }
         },
-        Collection = new ArrayList() {
+        Collection = new ArrayList {
           new TestClass2 {
             DateOffset = DateTimeOffset.MinValue,
             Guid = Guid.Empty

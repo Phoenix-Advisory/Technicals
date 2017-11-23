@@ -74,7 +74,9 @@ namespace Phoenix.Core.Comparer
         else if (!(pi.PropertyType.GetTypeInfo().IsPrimitive || pi.PropertyType.GetTypeInfo().IsEnum) && pi.PropertyType.Namespace != "System")
         {
           foreach (CompareResult res in Compare(pi.PropertyType, oldValue, newValue, GetName(prefix, pi.Name)))
+          {
             yield return res;
+          }
 
           continue;
         }

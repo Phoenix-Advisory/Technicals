@@ -30,13 +30,14 @@ namespace Phoenix.Core.Reflection
     {
       yield return Assembly.GetEntryAssembly();
 
-      foreach (AssemblyName assName in Assembly
-                                        .GetEntryAssembly()
+      foreach (AssemblyName assName in GetEntryAssembly()
                                         .GetReferencedAssemblies()
-                                        .Where(x => 
+                                        .Where(x =>
                                           x.FullName.StartsWith(assemblyStartWith, StringComparison.OrdinalIgnoreCase)
                                         ))
+      {
         yield return Assembly.Load(assName);
+      }
     }
   }
 }
