@@ -1,10 +1,7 @@
-﻿using Autofac;
-using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
-using Phoenix.Core.DependencyInjection;
 using Phoenix.Core.ParameterGuard;
 using System;
 using System.Collections.Generic;
@@ -24,6 +21,7 @@ namespace Phoenix.MongoDB.FileRepositories
   /// <typeparam name="TKey">The type of the key.</typeparam>
   /// <seealso cref="IMongoFileRepository{TMetadata, TKey}" />
   public class MongoFileRepository<TMetadata, TKey> : IMongoFileRepository<TMetadata, TKey>
+    where TMetadata : class
   {
     private readonly string _ConnectionName;
     private readonly string _BucketName;           
@@ -191,12 +189,13 @@ namespace Phoenix.MongoDB.FileRepositories
     /// <returns></returns>
     public virtual async Task<FileInfo<TMetadata>> Update(ObjectId id, byte[] content, string filename, TMetadata metadata, CancellationToken cancellationToken = default(CancellationToken))
     {
-      if (content == null || content.Count() == 0)
-        throw new ArgumentNullException("Content cannot be null");
-      if (string.IsNullOrEmpty(filename))
-        throw new ArgumentNullException("File name cannot be null or empty");
-      if (metadata == null)
-        throw new ArgumentNullException("Metadata cannot be null");
+      if (content == null || !content.Any())
+      {
+        throw new ArgumentNullException(nameof(content), "Content cannot be null");
+      }
+
+      Guard.IsNotNullOrWhiteSpace(filename, nameof(filename));
+      Guard.IsNotNull(metadata, nameof(metadata));
 
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -230,18 +229,13 @@ namespace Phoenix.MongoDB.FileRepositories
     /// <returns>The informations stored in bucket.</returns>
     public virtual async Task<FileInfo<TMetadata>> Update(TKey id, byte[] content, string filename, TMetadata metadata, CancellationToken cancellationToken = default(CancellationToken))
     {
-      if (content == null || content.Count() == 0)
+      if (content == null || !content.Any())
       {
-        throw new ArgumentNullException("Content cannot be null");
+        throw new ArgumentNullException(nameof(content), "Content cannot be null");
       }
-      if (string.IsNullOrEmpty(filename))
-      {
-        throw new ArgumentNullException("File name cannot be null or empty");
-      }
-      if (metadata == null)
-      {
-        throw new ArgumentNullException("Metadata cannot be null");
-      }
+
+      Guard.IsNotNullOrWhiteSpace(filename, nameof(filename));
+      Guard.IsNotNull(metadata, nameof(metadata));
 
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -446,8 +440,7 @@ namespace Phoenix.MongoDB.FileRepositories
     /// <returns></returns>
     public virtual async Task<FileInfo<TMetadata>> GetSingle(FilterDefinition<GridFSFileInfo> filter, CancellationToken cancellationToken = default(CancellationToken))
     {
-      cancellationToken.ThrowIfCancellationRequested();
-      //GridFSFileInfo result = await Bucket.Find(filter).SingleAsync(cancellationToken).ConfigureAwait(false);
+      cancellationToken.ThrowIfCancellationRequested();                                                           
 
       return await Convert(await Bucket.Find(filter).SingleAsync(cancellationToken).ConfigureAwait(false)).ConfigureAwait(false);
     }
@@ -492,8 +485,7 @@ namespace Phoenix.MongoDB.FileRepositories
     /// <returns></returns>
     public virtual async Task<FileInfo<TMetadata>> GetSingleOrDefault(FilterDefinition<GridFSFileInfo> filter, CancellationToken cancellationToken = default(CancellationToken))
     {
-      cancellationToken.ThrowIfCancellationRequested();
-      //GridFSFileInfo result = await Bucket.Find(filter).SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+      cancellationToken.ThrowIfCancellationRequested();                                                                 
 
       return await Convert(await Bucket.Find(filter).SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false)).ConfigureAwait(false);
     }
@@ -769,8 +761,7 @@ namespace Phoenix.MongoDB.FileRepositories
     /// <returns></returns>
     public virtual async Task<FileInfo<TMetadata>> UpdateMetadata(ObjectId id, TMetadata metadata, CancellationToken cancellationToken = default(CancellationToken))
     {
-      if (metadata == null)
-        throw new ArgumentNullException("Metadata cannot be null");
+      Guard.IsNotNull(metadata, nameof(metadata));
 
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -793,8 +784,7 @@ namespace Phoenix.MongoDB.FileRepositories
     /// <returns>The informations stored in bucket.</returns>
     public virtual async Task<FileInfo<TMetadata>> UpdateMetadata(TKey id, TMetadata metadata, CancellationToken cancellationToken = default(CancellationToken))
     {
-      if (metadata == null)
-        throw new ArgumentNullException("Metadata cannot be null");
+      Guard.IsNotNull(metadata, nameof(metadata));
 
       cancellationToken.ThrowIfCancellationRequested();
 
