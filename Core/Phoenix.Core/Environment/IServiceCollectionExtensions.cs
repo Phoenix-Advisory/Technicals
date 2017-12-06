@@ -7,7 +7,7 @@ namespace Phoenix.Core.Environment
   /// Extend collection or service descriptors.
   /// </summary>
   public static class IServiceCollectionExtensions 
-  {
+  {       
     /// <summary>
     /// Add <see cref="IRuntimeEnvironment"/> to dependency injection.
     /// </summary>
@@ -25,6 +25,10 @@ namespace Phoenix.Core.Environment
       Guard.IsNotNullOrWhiteSpace(rootPath, nameof(rootPath));
 
       services.AddSingleton<IRuntimeEnvironment>(new RuntimeEnvironment(environmentName, rootPath));
-    } 
+      
+      // if we want get standard environment name (same aspcore) : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+    }
+
+    
   }
 }
