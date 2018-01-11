@@ -11,7 +11,8 @@ namespace Phoenix.MongoDB.FileRepositories
   /// <seealso cref="MongoFileRepository{TMetadata, Guid}" />
   /// <seealso cref="IMongoFileRepository{TMetadata}" />
   public class MongoFileRepository<TMetadata>
-      : MongoFileRepository<TMetadata, Guid>, IMongoFileRepository<TMetadata>, IMongoFileRepository<TMetadata, Guid>
+      : MongoFileRepository<TMetadata, Guid>, IMongoFileRepository<TMetadata>
+    where TMetadata : class
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoFileRepository{TMetadata}" /> class.

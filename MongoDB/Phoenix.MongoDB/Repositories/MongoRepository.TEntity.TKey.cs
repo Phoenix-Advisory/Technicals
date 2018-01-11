@@ -1,14 +1,8 @@
-﻿using Autofac;
-using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Bindings;
 using MongoDB.Driver.Core.Operations;
-using Phoenix.Core.Comparer;
-using Phoenix.Core.DependencyInjection;
 using Phoenix.Core.ParameterGuard;
-using Phoenix.Core.Reflection;
-using Phoenix.Core.UserManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;

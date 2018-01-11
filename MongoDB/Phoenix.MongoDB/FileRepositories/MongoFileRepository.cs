@@ -8,7 +8,7 @@ namespace Phoenix.MongoDB.FileRepositories
   /// <seealso cref="IMongoFileRepository&lt;BsonDocument, Object&gt;" />
   /// <seealso cref="MongoFileRepository&lt;BsonDocument, Object&gt;" />
   /// <seealso cref="IMongoFileRepository" />
-  public class MongoFileRepository : MongoFileRepository<BsonDocument, object>, IMongoFileRepository, IMongoFileRepository<BsonDocument, object>
+  public class MongoFileRepository : MongoFileRepository<BsonDocument, object>, IMongoFileRepository
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="MongoFileRepository" /> class.

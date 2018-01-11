@@ -33,4 +33,11 @@ deploy:
   api_key:
     secure: wDpncF7Nunu2WyL9m0qqElo44vmFxyD4qhOvXkyBhThZjEtG4mEtsfzzl01zoTec
   on:
-    branch: master
+    branch: master  
+- provider: NuGet
+  server: https://www.myget.org/F/phoenix-advisory/api/v2/package
+  api_key:
+    secure: pr+HPjk9q8FALcSwxvkihm7tdHKEjDsBt4TuSrw1h7p9AJSTcTJiNAVG9VtyOr4C
+  symbol_server: https://www.myget.org/F/phoenix-advisory/symbols/api/v2/package
+  on:
+    branch: dev
