@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4EF72A65-CCEB-40E2-B2E0-F40657F0E84F}"
 EndProject
@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{E7BD1B64
 		Build\Common.props = Build\Common.props
 		Build\Version.props = Build\Version.props
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mvc", "Mvc", "{B813B441-2975-493E-9F9E-964383F6996F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phoenix.Mvc", "Mvc\Phoenix.Mvc\Phoenix.Mvc.csproj", "{06C2ABC6-647E-4409-866E-31968A25A1DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,10 @@ Global
 		{321E08E8-A9DA-40E1-BB21-70FA93B78B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{321E08E8-A9DA-40E1-BB21-70FA93B78B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{321E08E8-A9DA-40E1-BB21-70FA93B78B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06C2ABC6-647E-4409-866E-31968A25A1DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C2ABC6-647E-4409-866E-31968A25A1DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C2ABC6-647E-4409-866E-31968A25A1DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06C2ABC6-647E-4409-866E-31968A25A1DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +61,7 @@ Global
 		{AA7F5547-7FB6-4190-93B3-AC53BCF9F49C} = {4EF72A65-CCEB-40E2-B2E0-F40657F0E84F}
 		{F46A6ABB-A548-450A-A799-2618A6ED896A} = {91FB23BE-61B5-4AE1-A50E-17549B5E02E9}
 		{321E08E8-A9DA-40E1-BB21-70FA93B78B5C} = {91FB23BE-61B5-4AE1-A50E-17549B5E02E9}
+		{06C2ABC6-647E-4409-866E-31968A25A1DC} = {B813B441-2975-493E-9F9E-964383F6996F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A72E63EC-7C67-4F2E-87B1-1A529A81F25B}
